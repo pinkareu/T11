@@ -68,28 +68,41 @@ export const AuthProvider = ({ children }) => {
      * @param {string} password - The password of the user.
      * @returns {string} - Upon failure, Returns an error message.
      */
-    const login = async (username, password) => {
-        // TODO: complete me
-        try {
+   const login = async (username, password) => {
+       //TODO: complete me
+       try {
             const res = await fetch(`${VITE_BACKEND_URL}/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username, password })
             });
 
+            const data = await res.json();  // Read JSON. 
+
             if (!res.ok) {
-                const err = await res.json();
-                console.log(err);
-                return err.message;
+                console.log(data);
+                return data.message;
             }
 
-            const data = await res.json();
+            // Extract token
+            const token = data.token;
+            localStorage.setItem("token", token);
 
-            // Save token
-            localStorage.setItem("token", data.token);
+            // Fetch user info
+            const user_res = await fetch(`${VITE_BACKEND_URL}/user/me`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            const data_user = await user_res.json();
+
+            if (!user_res.ok) {
+                console.log(data_user);
+                return data_user.message;
+            }
 
             // Save user to context
-            setUser(data.user);
+            console.log("Logged in user:", data_user);
+            setUser(data_user.user);
 
             // Navigate to profile page
             navigate("/profile");
@@ -98,6 +111,7 @@ export const AuthProvider = ({ children }) => {
             return err.message;
         }
     };
+
 
     /**
      * Registers a new user. 
@@ -121,7 +135,7 @@ export const AuthProvider = ({ children }) => {
                 return err.message
             }
 
-            navigate("/"); // success
+            navigate("/success"); // success
             return "";
         } catch (err) {
             return err.message;   
