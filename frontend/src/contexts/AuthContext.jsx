@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
 
-    const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "https://t11-production-2f4c.up.railway.app";
+    const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "https://courageous-vision-production.up.railway.app";
 
     useEffect(() => {
         // TODO: complete me, by retriving token from localStorage and make an api call to GET /user/me.
