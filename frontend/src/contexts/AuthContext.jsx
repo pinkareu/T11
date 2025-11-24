@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 const AuthContext = createContext(null);
 
 // TODO: get the BACKEND_URL.
-const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "https://courageous-vision-production.up.railway.app/";
 
 /*
  * This provider should export a `user` context state that is 
@@ -18,6 +17,8 @@ const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "https://courageous
 export const AuthProvider = ({ children }) => {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
+
+    const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "https://t11-production-2f4c.up.railway.app";
 
     useEffect(() => {
         // TODO: complete me, by retriving token from localStorage and make an api call to GET /user/me.
@@ -40,7 +41,7 @@ export const AuthProvider = ({ children }) => {
                 setUser(data.user);
 
             } catch (err) {
-                console.error("Error restoring user:", err);
+                return err.message;
             }
         
         })();
@@ -78,7 +79,8 @@ export const AuthProvider = ({ children }) => {
 
             if (!res.ok) {
                 const err = await res.json();
-                return err.error || "Login failed.";
+                console.log(err);
+                return err.message;
             }
 
             const data = await res.json();
@@ -93,7 +95,7 @@ export const AuthProvider = ({ children }) => {
             navigate("/profile");
             return "";
         } catch (err) {
-            return "Login failed.";
+            return err.message;
         }
     };
 
@@ -115,13 +117,14 @@ export const AuthProvider = ({ children }) => {
 
             if (!res.ok) {
                 const err = await res.json();
-                return err.error || "Registration failed.";
+                console.log(err);
+                return err.message
             }
 
             navigate("/"); // success
             return "";
         } catch (err) {
-            return "Registration failed."        
+            return err.message;   
         }
     };
 
